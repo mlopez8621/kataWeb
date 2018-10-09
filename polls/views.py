@@ -36,7 +36,7 @@ def login(request):
         if user is not None:
             auth.login(request, user)
             messages.success(request, "Bienvenido al sistema".format(username), extra_tags="alert-success")
-            #return render(request, '/', {})
+            # return render(request, '/', {})
             return HttpResponseRedirect('/')
         else:
             messages.error(request, "¡El usuario o la contraseña son incorrectos!", extra_tags="alert-danger")
@@ -62,20 +62,21 @@ def register(request):
         user.email = request.POST.get('correo')
         user.save()
 
-        nuevo_trabajador=Trabajador(nombre=request.POST['nombre'],
+        nuevo_trabajador = Trabajador(nombre=request.POST['nombre'],
                                       apellidos=request.POST['apellidos'],
                                       aniosExperiencia=request.POST.get('aniosExperiencia'),
-                                      tiposDeServicio=TiposDeServicio.objects.get(pk=request.POST.get('tiposDeServicio')),
+                                      tiposDeServicio=TiposDeServicio.objects.get(
+                                          pk=request.POST.get('tiposDeServicio')),
                                       telefono=request.POST.get('telefono'),
                                       correo=request.POST.get('correo'),
                                       imagen=request.FILES['imagen'],
                                       usuarioId=user)
         nuevo_trabajador.save()
-
     return HttpResponseRedirect('/')
 
-def editar_perfil(request,idTrabajador):
-    trabajador=Trabajador.objects.get(usuarioId=idTrabajador)
+
+def editar_perfil(request):
+    trabajador = Trabajador.objects.get(usuarioId=request.user.id)
     if request.method == 'POST':
         # formulario enviado
         form_trabajador = TrabajadorForm(request.POST, request.FILES, instance=trabajador)
@@ -83,43 +84,47 @@ def editar_perfil(request,idTrabajador):
         if form_trabajador.is_valid():
             # formulario validado correctamente
             form_trabajador.save()
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/editar_perfil')
 
     else:
         # formulario inicial
         form_trabajador = TrabajadorForm(instance=trabajador)
 
-    context = {'form_trabajador': form_trabajador}
-    return render(request, 'polls/editar.html', context)
+    context = {'form_trabajador': form_trabajador, 'trabajador': trabajador}
+    return render(request, 'polls/edit.html', context)
+
 
 @csrf_exempt
 def add_comment(request):
     if request.method == 'POST':
-       new_comment = Comentario(texto=request.POST.get('texto'),
-                                      trabajador=Trabajador.objects.get(pk=request.POST.get('trabajador')),
-                                      correo=request.POST.get('correo'))
-       new_comment.save()
+        new_comment = Comentario(texto=request.POST.get('texto'),
+                                 trabajador=Trabajador.objects.get(pk=request.POST.get('trabajador')),
+                                 correo=request.POST.get('correo'))
+        new_comment.save()
     return HttpResponse(serializers.serialize("json", [new_comment]))
+
 
 @csrf_exempt
 def mostrarTrabajadores(request, tipo=""):
     if tipo == "":
-      lista_trabajadores = Trabajador.objects.all()
+        lista_trabajadores = Trabajador.objects.all()
     else:
-      lista_trabajadores = Trabajador.objects.select_related().filter(tiposDeServicio__nombre__icontains=tipo)
-
+        lista_trabajadores = Trabajador.objects.select_related().filter(tiposDeServicio__nombre__icontains=tipo)
 
     return HttpResponse(serializers.serialize("json", lista_trabajadores))
 
+
 @csrf_exempt
 def mostrarComentarios(request, idTrabajador):
-    lista_comentarios =Comentario.objects.filter(trabajador=Trabajador.objects.get(pk=idTrabajador))
+    lista_comentarios = Comentario.objects.filter(trabajador=Trabajador.objects.get(pk=idTrabajador))
 
     return HttpResponse(serializers.serialize("json", lista_comentarios))
+
 
 def getTiposDeServicio(request, pk):
     tipo = TiposDeServicio.objects.get(pk=pk)
     return HttpResponse(serializers.serialize("json", [tipo]))
+
 
 def detalle_trabajador(request):
     return render(request, "polls/detalle.html")
@@ -128,7 +133,3 @@ def detalle_trabajador(request):
 def detail(request, pk):
     trabajador = get_object_or_404(Trabajador, pk=pk)
     return HttpResponse(serializers.serialize("json", [trabajador]))
-
-
-
-
