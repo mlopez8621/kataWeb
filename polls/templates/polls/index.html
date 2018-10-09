@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Busco Ayuda</title>
+    <title>BuscoAyuda</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
@@ -29,15 +29,15 @@
 <body>
 <ul class="nav navbar-nav navbar-right" style="padding-right: 20px">
     {% if user.is_authenticated %}
-
+            <li><a class="nav-link" data-value="about" href="#">{{ user.username }}</a></li>
             <li><a href="{% url 'principal:editar' idTrabajador=user.id %}" id="id_editar"><span class="glyphicon glyphicon-user"></span> Editar</a></li>
-    <li>
-            <a href="logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
-        </li>
+            <li><a href="logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
     {% else %}
         <li><a href="#" id="id_register"><span class="glyphicon glyphicon-user"></span> Registrarse</a></li>
-        <li><a href="#" id="id_login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a href="#" id="id_login"><span class="glyphicon glyphicon-login"></span> Login</a></li>
+
     {% endif %}
+
 </ul>
 <div class="jumbotron" style="padding-left: 20px; height: 50%">
     <h1>Busco Ayuda</h1>
@@ -96,7 +96,9 @@
         {% endif %}
     </div>
 {% endif %}
+{% include "polls/login.html" %}
 {% include "polls/registro.html" %}
+
 <!--suppress JSUnresolvedFunction -->
 <script>
     $(document).ready(function () {

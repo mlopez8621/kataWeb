@@ -1,4 +1,6 @@
 # coding=utf-8
+
+
 import datetime
 
 import boto
@@ -27,16 +29,20 @@ def index(request):
 
 
 def login(request):
-    username = request.POST.get('usrname', '')
-    password = request.POST.get('psw', '')
-    user = auth.authenticate(username=username, password=password)
-    if user is not None:
-        auth.login(request, user)
-        messages.success(request, "Bienvenido al sistema {}".format(username), extra_tags="alert-success")
-        return HttpResponseRedirect('/')
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = auth.authenticate(username=username, password=password)
+        if user is not None:
+            auth.login(request, user)
+            messages.success(request, "Bienvenido al sistema".format(username), extra_tags="alert-success")
+            #return render(request, '/', {})
+            return HttpResponseRedirect('/')
+        else:
+            messages.error(request, "¡El usuario o la contraseña son incorrectos!", extra_tags="alert-danger")
+            return HttpResponseRedirect('/')
     else:
-        messages.error(request, "¡El usuario o la contraseña son incorrectos!", extra_tags="alert-danger")
-        return HttpResponseRedirect('/')
+        return render(request, 'login.html', {})
 
 
 def logout(request):
@@ -55,8 +61,6 @@ def register(request):
         user.last_name = request.POST.get('apellidos')
         user.email = request.POST.get('correo')
         user.save()
-
-
 
         nuevo_trabajador=Trabajador(nombre=request.POST['nombre'],
                                       apellidos=request.POST['apellidos'],
@@ -124,3 +128,7 @@ def detalle_trabajador(request):
 def detail(request, pk):
     trabajador = get_object_or_404(Trabajador, pk=pk)
     return HttpResponse(serializers.serialize("json", [trabajador]))
+
+
+
+
