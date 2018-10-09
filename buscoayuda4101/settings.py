@@ -10,7 +10,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,38 +20,16 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = '7o2hu3hlahr30_bdf*ay)&r5z%y@&m*skx=02=%xapxfjtrro('
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-# AWS S3 Credentials
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-AWS_PRELOAD_METADATA = True
-AWS_QUERYSTRING_AUTH = False
 
 # Expires 20 years in the future at 8PM GMT
 #tenyrs = date.today() + timedelta(days=365*10)
 #AWS_HEADERS = {
 	#'Expires': tenyrs.strftime('%a, %d %b %Y 20:00:00 GMT')
 #}
-
-STATICFILES_STORAGE = 's3_folder_storage.s3.StaticStorage'
-STATIC_URL = 'http://%s.s3.amazonaws.com/static/' % AWS_STORAGE_BUCKET_NAME
-STATIC_S3_PATH = 'static/'
-
-# S3 Storage base
-#AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-
-# This is used by the `static` template tag from `static`
-#STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'static')
-
-# Tell the staticfiles app to use S3Boto storage when writing the collected static files (when you run `collectstatic`).
-#STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-
 
 # Application definition
 
@@ -63,10 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'bootstrap3',
-    'storages',
-    's3_folder_storage'
+    'django.contrib.staticfiles'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -107,12 +81,10 @@ WSGI_APPLICATION = 'buscoayuda4101.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('DB_ENGINE'),
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT')
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'buscoayuda',
+            'USER': 'postgres',
+            'PASSWORD': 'root'
     }
 }
 
@@ -139,10 +111,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
-# Update database configuration with $DATABASE_URL.
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
