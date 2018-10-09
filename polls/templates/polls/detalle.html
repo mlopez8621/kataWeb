@@ -43,6 +43,7 @@
         function agregarComentario(){
             $.post( "/addComment", { texto: $('#comentario').val(), trabajador: trabajador, correo: $('#correo').val() })
               .done(function( data ) {
+                  console.log(data);
                   mostrarComentarios();
               });
         }
@@ -72,9 +73,9 @@
     <div style="box-shadow: 2px 2px 5px gray; border-radius: 5px" class="col-md-6 col-md-offset-3">
         <form onsubmit="agregarComentario()">
          <input id="correo" style="margin: 5px;" type="email" required placeholder="Correo">
-         <textarea placeholder="Agreagar comentario" id="comentario" style="margin: 5px;" rows="3" cols="90" required></textarea>
+         <textarea placeholder="Agreagar comentario" id="textComentario" style="margin: 5px;" rows="3" cols="90" required></textarea>
 
-        <button type="submit" style="margin: 5px;" class="btn btn-default btn-success" title="Adicionar comentario">Comentar <span class="glyphicon glyphicon-plus"></span>
+        <button type="submit" style="margin: 5px;" class="btn btn-default btn-success" title="Agregar comentario">Comentar <span class="glyphicon glyphicon-plus"></span>
         </button>
         </form>
 
